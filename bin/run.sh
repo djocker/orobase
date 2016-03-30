@@ -19,8 +19,11 @@ composer-map-env.php ${APP_ROOT}/composer.json
 # Generate parameters.yml
 sudo -u www-data -E composer run-script post-install-cmd -n -d ${APP_ROOT};
 
-if [[ ! -z ${APP_IS_INSTALLED} ]] || [[ $(mysql -e "show databases like '${APP_DB_NAME}'" -h${APP_DB_HOST} -u${APP_DB_USER} -p${APP_DB_PASSWORD} -N | wc -l) -gt 0 ]]; then
+if [[ ! -z ${APP_IS_INSTALLED} ]] \
+    || [[ $(mysql -e "show databases like '${APP_DB_NAME}'" -h${APP_DB_HOST} -u${APP_DB_USER} -p${APP_DB_PASSWORD} -N | wc -l) -gt 0 ]] \
+    || [[ $(mysql -e "show tables from ${APP_DB_NAME};'" -h${APP_DB_HOST} -u${APP_DB_USER} -p${APP_DB_PASSWORD} -N | wc -l) -gt 0 ]]; then
   sed -i -e "s/installed:.*/installed: true/g" /var/www/app/config/parameters.yml
+  APP_IS_INSTALLED=true
 fi
 
 # Clean exists folders
@@ -56,28 +59,24 @@ fi
 cd ${APP_ROOT}
 
 # If already installed
-if [[ -f /var/www/app/config/parameters.yml ]] && [[ 0 -lt `cat /var/www/app/config/parameters.yml | grep ".*installed:\s*[\']\{0,1\}[a-zA-Z0-9\:\+\-]\{1,\}[\']\{0,1\}" | grep -v "null" | wc -l` ]]
+if [[ -z ${APP_IS_INSTALLED} ]]
 then
-    echo "Prepare application..."
-    rm -r ${APP_ROOT}/app/cache/*
-    sudo -u www-data ${APP_ROOT}/app/console --env=prod assets:install
-    sudo -u www-data ${APP_ROOT}/app/console --env=prod oro:navigation:init
-    sudo -u www-data ${APP_ROOT}/app/console --env=prod fos:js-routing:dump --target=web/js/routes.js
-    sudo -u www-data ${APP_ROOT}/app/console --env=prod oro:localization:dump
-    sudo -u www-data ${APP_ROOT}/app/console --env=prod assetic:dump
-    sudo -u www-data ${APP_ROOT}/app/console --env=prod oro:translation:dump
-    sudo -u www-data ${APP_ROOT}/app/console --env=prod oro:requirejs:build
-    sudo -u www-data ${APP_ROOT}/app/console --env=prod cache:clear
+    if [[ ! -z ${CMD_INIT_CLEAN} ]]; then
+        echo "Running init command: ${CMD_INIT_CLEAN}"
+        sh -c "${CMD_INIT_CLEAN}"
+    fi
+else
+    echo "Updating application..."
+    if [[ -d ${APP_ROOT}/app/cache ]] && [[ $(ls -l ${APP_ROOT}/app/cache/) -gt 0 ]]; then
+        rm -r ${APP_ROOT}/app/cache/*
+    fi
+    sudo -u www-data ${APP_ROOT}/app/console --env=prod oro:platform:update -f
 
     if [[ ! -z ${CMD_INIT_INSTALLED} ]]; then
         echo "Running init command: ${CMD_INIT_INSTALLED}"
         sh -c "${CMD_INIT_INSTALLED}"
     fi
-else
-    if [[ ! -z ${CMD_INIT_CLEAN} ]]; then
-        echo "Running init command: ${CMD_INIT_CLEAN}"
-        sh -c "${CMD_INIT_CLEAN}"
-    fi
+
 fi
 
 if [[ ! -z ${CMD_INIT_AFTER} ]]; then
