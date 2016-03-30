@@ -66,8 +66,6 @@ sed -i -e "s/return \$fileLength == 255;/return \$fileLength > 200;/g" ${APP_DIR
 # If is composer application
 if [[ -f ${APP_DIR}/composer.json ]]; then
     composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader -d ${APP_DIR} || error "Can't install dependencies"
-    # Map environment variables
-    composer-map-env.php ${APP_DIR}/composer.json
 else
     error "${APP_DIR}/composer.json not found!"
 fi

@@ -12,6 +12,9 @@ DATA_ROOT="/srv/app-data"
 # If it's the first run
 if [[ 0 -eq $(ls ${DATA_ROOT}/config/ | wc -l) ]]
 then
+    # Map environment variables
+    composer-map-env.php ${APP_ROOT}/composer.json
+
     # Generate parameters.yml
     sudo -u www-data -E composer run-script post-install-cmd -n -d ${APP_ROOT};
 
