@@ -10,7 +10,7 @@ apt-get -qy update
 apt-get -qqy upgrade
 
 # install base packages
-apt-get install -qqy vim git-core sudo wget curl procps python-setuptools mcrypt \
+apt-get install -qqy vim git-core sudo wget curl procps python-setuptools mcrypt mysql-client \
 php5-fpm php5-cli php5-dev php5-mysql php5-curl php5-gd php5-mcrypt \
 php5-sqlite php5-xmlrpc php5-xsl php5-common php5-intl php5-ldap \
 php5-cli php-apc || exit 1
