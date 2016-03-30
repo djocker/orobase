@@ -3,7 +3,7 @@ APP_ROOT="/var/www"
 DATA_ROOT="/srv/app-data"
 
 # Check and fix ownership if invalid
-if [[ $(stat -c '%u:%g' /var/www) != $(getent passwd | grep www-data | awk -F ':' '{print $3 ":" $4}') ]]; then
+if [[ $(stat -c '%u:%g' /var/www) != $(getent passwd | grep www-data | awk -F ':' '{print $3 ":" $4}') ]] || [[ $(ls -l ${APP_ROOT} | awk '{print $3 ":" $4}' | grep -v www-data:www-data | wc -l) -gt 0 ]]; then
     chown -R $(getent passwd | grep www-data | awk -F ':' '{print $3 ":" $4}') ${APP_ROOT}
 fi
 
