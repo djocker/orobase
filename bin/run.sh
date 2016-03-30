@@ -70,7 +70,7 @@ else
     if [[ -d ${APP_ROOT}/app/cache ]] && [[ $(ls -l ${APP_ROOT}/app/cache/) -gt 0 ]]; then
         rm -r ${APP_ROOT}/app/cache/*
     fi
-    sudo -u www-data ${APP_ROOT}/app/console --env=prod oro:platform:update -f
+    sudo -u www-data ${APP_ROOT}/app/console --env=prod oro:platform:update --force
 
     if [[ ! -z ${CMD_INIT_INSTALLED} ]]; then
         echo "Running init command: ${CMD_INIT_INSTALLED}"
