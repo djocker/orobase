@@ -2,6 +2,11 @@
 APP_ROOT="/var/www"
 DATA_ROOT="/srv/app-data"
 
+# Check and fix ownership if invalid
+if [[ $(stat -c '%u:%g' /var/www) != $(getent passwd | grep www-data | awk -F ':' '{print $3 ":" $4}') ]]; then
+    chown -R $(getent passwd | grep www-data | awk -F ':' '{print $3 ":" $4}') ${APP_ROOT}
+fi
+
 # Prepare folders for persistent data
 [[ -d ${DATA_ROOT}/config ]]         || sudo -u www-data mkdir -p ${DATA_ROOT}/config
 [[ -d ${DATA_ROOT}/cache ]]          || sudo -u www-data mkdir -p ${DATA_ROOT}/cache
