@@ -8,34 +8,24 @@ if [[ $(stat -c '%u:%g' /var/www) != $(getent passwd | grep www-data | awk -F ':
 fi
 
 # Prepare folders for persistent data
-[[ -d ${DATA_ROOT}/config ]]         || sudo -u www-data mkdir -p ${DATA_ROOT}/config
 [[ -d ${DATA_ROOT}/cache ]]          || sudo -u www-data mkdir -p ${DATA_ROOT}/cache
 [[ -d ${DATA_ROOT}/media ]]          || sudo -u www-data mkdir -p ${DATA_ROOT}/media
 [[ -d ${DATA_ROOT}/uploads ]]        || sudo -u www-data mkdir -p ${DATA_ROOT}/uploads
 [[ -d ${DATA_ROOT}/attachment ]]     || sudo -u www-data mkdir -p ${DATA_ROOT}/attachment
 
-# If it's the first run
-if [[ 0 -eq $(ls ${DATA_ROOT}/config/ | wc -l) ]]
-then
-    # Map environment variables
-    composer-map-env.php ${APP_ROOT}/composer.json
+# Map environment variables
+composer-map-env.php ${APP_ROOT}/composer.json
 
-    # Generate parameters.yml
-    sudo -u www-data -E composer run-script post-install-cmd -n -d ${APP_ROOT};
-
-    # Copy configs
-    sudo -u www-data cp -r ${APP_ROOT}/app/config/* ${DATA_ROOT}/config/
-fi
+# Generate parameters.yml
+sudo -u www-data -E composer run-script post-install-cmd -n -d ${APP_ROOT};
 
 # Clean exists folders
-[[ -d ${APP_ROOT}/app/config ]]     && rm -r ${APP_ROOT}/app/config
 [[ -d ${APP_ROOT}/app/cache ]]      && rm -r ${APP_ROOT}/app/cache
 [[ -d ${APP_ROOT}/web/media ]]      && rm -r ${APP_ROOT}/web/media
 [[ -d ${APP_ROOT}/web/uploads ]]    && rm -r ${APP_ROOT}/web/uploads
 [[ -d ${APP_ROOT}/app/attachment ]] && rm -r ${APP_ROOT}/app/attachment
 
 # Linking persistent data
-sudo -u www-data ln -s ${DATA_ROOT}/config      ${APP_ROOT}/app/config
 sudo -u www-data ln -s ${DATA_ROOT}/cache       ${APP_ROOT}/app/cache
 sudo -u www-data ln -s ${DATA_ROOT}/media       ${APP_ROOT}/web/media
 sudo -u www-data ln -s ${DATA_ROOT}/uploads     ${APP_ROOT}/web/uploads
