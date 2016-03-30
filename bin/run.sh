@@ -67,7 +67,7 @@ then
     fi
 else
     echo "Updating application..."
-    if [[ -d ${APP_ROOT}/app/cache ]] && [[ $(ls -l ${APP_ROOT}/app/cache/) -gt 0 ]]; then
+    if [[ -d ${APP_ROOT}/app/cache ]] && [[ $(ls -l ${APP_ROOT}/app/cache/ | wc -l) -gt 0 ]]; then
         rm -r ${APP_ROOT}/app/cache/*
     fi
     sudo -u www-data ${APP_ROOT}/app/console --env=prod oro:platform:update --force
