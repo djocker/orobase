@@ -1,6 +1,5 @@
 data:
-  image: scherepanov/orocrm-data
-  command: "sh -c 'while : ; do sleep 1; done'"
+  image: djocker/orodata
 db:
   image: mysql:5.5
   expose:
@@ -32,6 +31,10 @@ web:
   volumes:
     - ./src:/var/www
   environment:
+    - CMD_INIT_BEFORE=
+    - CMD_INIT_CLEAN=
+    - CMD_INIT_INSTALLED=
+    - CMD_INIT_AFTER=
     - APP_DB_DRIVER=pdo_mysql
     - APP_DB_HOST=db
     - APP_DB_PORT=3306

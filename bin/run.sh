@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 APP_ROOT="/var/www"
 DATA_ROOT="/srv/app-data"
-APP_IS_INSTALLED=
 
 # Check and fix ownership if invalid
 if [[ $(stat -c '%u:%g' /var/www) != $(getent passwd | grep www-data | awk -F ':' '{print $3 ":" $4}') ]] || [[ $(ls -l ${APP_ROOT} | awk '{print $3 ":" $4}' | grep -v www-data:www-data | wc -l) -gt 0 ]]; then
@@ -20,7 +19,7 @@ composer-map-env.php ${APP_ROOT}/composer.json
 # Generate parameters.yml
 sudo -u www-data -E composer run-script post-install-cmd -n -d ${APP_ROOT};
 
-if [ $(mysql -e "show databases like '${APP_DB_NAME}'" -h${APP_DB_HOST} -u${APP_DB_USER} -p${APP_DB_PASSWORD} -N | wc -l) -gt 0 ]; then
+if [[ ! -z ${APP_IS_INSTALLED} ]] || [[ $(mysql -e "show databases like '${APP_DB_NAME}'" -h${APP_DB_HOST} -u${APP_DB_USER} -p${APP_DB_PASSWORD} -N | wc -l) -gt 0 ]]; then
   sed -i -e "s/installed:.*/installed: true/g" /var/www/app/config/parameters.yml
 fi
 
