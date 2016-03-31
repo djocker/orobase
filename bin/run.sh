@@ -21,7 +21,7 @@ sudo -u www-data -E composer run-script post-install-cmd -n -d ${APP_ROOT};
 
 if [[ ! -z ${APP_IS_INSTALLED} ]] \
     || [[ $(mysql -e "show databases like '${APP_DB_NAME}'" -h${APP_DB_HOST} -u${APP_DB_USER} -p${APP_DB_PASSWORD} -N | wc -l) -gt 0 ]] \
-    || [[ $(mysql -e "show tables from ${APP_DB_NAME};'" -h${APP_DB_HOST} -u${APP_DB_USER} -p${APP_DB_PASSWORD} -N | wc -l) -gt 0 ]]; then
+    && [[ $(mysql -e "show tables from ${APP_DB_NAME};'" -h${APP_DB_HOST} -u${APP_DB_USER} -p${APP_DB_PASSWORD} -N | wc -l) -gt 0 ]]; then
   sed -i -e "s/installed:.*/installed: true/g" /var/www/app/config/parameters.yml
   APP_IS_INSTALLED=true
 fi
