@@ -54,6 +54,12 @@ fi
 [[ 0 -lt $? ]] && error "Can't fetch ${GIT_URI} ${GIT_REF}"
 
 git checkout -f ${GIT_REF} || error "Can't checkout ${GIT_URI} ${GIT_REF}"
+
+# If ssh key not present try to download submodules via https
+if [[ -f .gitmodules ]] && [[ -z ${SSH_PRIVATE_KEY} ]]; then
+    sed -i -e "s/git@github.com:/https:\/\/github.com\//g" .gitmodules
+fi
+
 git submodule update --init
 
 # Export source code
