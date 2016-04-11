@@ -71,6 +71,9 @@ sed -i -e "s/return \$fileLength == 255;/return \$fileLength > 200;/g" ${APP_DIR
 
 # If is composer application
 if [[ -f ${APP_DIR}/composer.json ]]; then
+    if [[ ! -f ${APP_DIR}/composer.lock ]]; then
+        composer update --no-interaction --lock -d ${APP_DIR} || error "Can't install lock file"
+    fi
     composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader -d ${APP_DIR} || error "Can't install dependencies"
 else
     error "${APP_DIR}/composer.json not found!"
