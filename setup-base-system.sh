@@ -1,19 +1,31 @@
 #!/usr/bin/env bash
+localedef -c -f UTF-8 -i en_US en_US.UTF-8
 export DEBIAN_FRONTEND=noninteractive
+export LC_ALL='en_US.UTF-8'
+export LANG='en_US.UTF-8'
+export LANGUAGE='en_US.UTF-8'
+
 WWW_USER=${WWW_USER-"www-data"}
 WWW_GROUP=${WWW_USER-"www-data"}
 MEMORY_LIMIT_CLI=${MEMORY_LIMIT_CLI-"2048"}
 MEMORY_LIMIT_FPM=${MEMORY_LIMIT_FPM-"2048"}
 UPLOAD_LIMIT=${UPLOAD_LIMIT-"256"}
 
+locale-gen 'en_US.UTF-8'
+dpkg-reconfigure locales 
+
 apt-get -qy update
 apt-get -qqy upgrade
+
+apt-get install -qqy software-properties-common python-software-properties
+add-apt-repository ppa:ondrej/php5-5.6
+apt-get update
 
 # install base packages
 apt-get install -qqy vim git-core sudo wget curl procps python-setuptools mcrypt mysql-client \
 php5-fpm php5-cli php5-dev php5-mysql php5-curl php5-gd php5-mcrypt \
 php5-sqlite php5-xmlrpc php5-xsl php5-common php5-intl php5-ldap \
-php5-cli php5-mongo php5-redis php-apc || exit 1
+php5-cli php5-mongo php5-redis php5-apcu || exit 1
 
 
 # Automatically instal the latest nginx
@@ -29,8 +41,21 @@ apt-get install -qqy --reinstall nginx || exit 1
 mv composer.phar /usr/local/bin/composer
 
 # install node.js
-curl -sL https://deb.nodesource.com/setup | bash -
+curl -sL https://deb.nodesource.com/setup_4.x | bash -
 apt-get install -qqy nodejs || exit 1
+
+# install php5-twig extension
+mkdir /tmp/twig && cd /tmp/twig && \
+curl -fSL "https://github.com/twigphp/Twig/archive/v1.24.1.tar.gz" -o twig.tar.gz && \
+tar -xzv --strip-components=1 -f twig.tar.gz && \
+rm twig.tar.gz && \
+cd ext/twig && phpize && \
+./configure && make && make install && \
+cp /tmp/twig/ext/twig/modules/twig.so $(php-config --extension-dir) && \
+cd / && \
+echo 'extension=twig.so' > /etc/php5/fpm/conf.d/20-twig.ini && \
+echo 'extension=twig.so' > /etc/php5/cli/conf.d/20-twig.ini && \
+rm -Rf /tmp/twig
 
 # install supervisor
 easy_install supervisor || exit 1
