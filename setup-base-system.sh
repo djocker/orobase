@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 localedef -c -f UTF-8 -i en_US en_US.UTF-8
 export DEBIAN_FRONTEND=noninteractive
+
+locale-gen en en_US en_US.UTF-8
+dpkg-reconfigure locales
+
 export LC_ALL='en_US.UTF-8'
 export LANG='en_US.UTF-8'
 export LANGUAGE='en_US.UTF-8'
@@ -10,9 +14,6 @@ WWW_GROUP=${WWW_GROUP-"www-data"}
 MEMORY_LIMIT_CLI=${MEMORY_LIMIT_CLI-"2048"}
 MEMORY_LIMIT_FPM=${MEMORY_LIMIT_FPM-"2048"}
 UPLOAD_LIMIT=${UPLOAD_LIMIT-"256"}
-
-locale-gen 'en_US.UTF-8'
-dpkg-reconfigure locales 
 
 apt-get -qy update
 apt-get -qqy upgrade
