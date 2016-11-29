@@ -1,7 +1,10 @@
 FROM ubuntu:14.04
 
-COPY setup-base-system.sh /opt/bin/setup-base-system.sh
-RUN /bin/bash /opt/bin/setup-base-system.sh && rm /opt/bin/setup-base-system.sh
+COPY ["setup.sh", "configure.sh", "/opt/bin/"]
 
-COPY bin/* /usr/local/bin/
+RUN /bin/bash /opt/bin/setup.sh
+RUN /bin/bash /opt/bin/configure.sh
+
+COPY ["bin/*", "/usr/local/bin/"]
+
 RUN chmod +x /usr/local/bin/*
