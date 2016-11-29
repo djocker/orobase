@@ -44,6 +44,7 @@ rm -rf /var/www
 mkdir -p /srv/app-data
 mkdir -p /var/www
 
+mkdir -p /var/run/php
 ln -s /usr/sbin/php-fpm5.6 /usr/sbin/php5-fpm
 ln -s /usr/sbin/php-fpm5.6 /usr/sbin/php-fpm
 
