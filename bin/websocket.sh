@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 /usr/local/bin/waitinstall.sh
-exec /usr/bin/sudo -u www-data /var/www/app/console clank:server --env prod
+exec /sbin/runuser -s /bin/sh -c "exec /usr/bin/php /var/www/app/console clank:server --env prod" www-data 

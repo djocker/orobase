@@ -35,7 +35,12 @@ class Listener
             }, $argv);
             $cmd = sprintf('%s %s', $executable, implode(' ', $argv));
         }
-        $this->cmd = sprintf('sudo -u www-data /bin/bash -c "%s > %s"', addcslashes($cmd, '"'), $this->logFile);
+        $this->cmd = sprintf(
+                '/sbin/runuser -s /bin/sh -c "%s > %s" %s', 
+                addcslashes($cmd, '"'), 
+                $this->logFile,
+                $this->user
+            );
         
         $this->out("READY\n");
         while (true) {
