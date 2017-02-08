@@ -22,7 +22,7 @@ mcrypt mysql-client zip unzip redis-tools netcat-openbsd
 # Install php
 apt-get install -qqy --no-install-recommends php-fpm php-cli php-common php-dev \
 php-mysql php-curl php-gd php-mcrypt php-xmlrpc php-ldap \
-php-xsl php-intl php-soap php-mbstring php-zip php-bz2 php-redis || exit 1 
+php-xsl php-intl php-soap php-mbstring php-zip php-bz2 php-redis php-tidy || exit 1
 
 # Install nginx
 apt-get install -qqy --reinstall nginx || exit 1
